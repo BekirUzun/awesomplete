@@ -29,6 +29,7 @@ var _ = function (input, o) {
 		minChars: 2,
 		maxItems: 10,
 		autoFirst: false,
+		search: false,
 		data: _.DATA,
 		filter: _.FILTER_CONTAINS,
 		sort: o.sort === false ? false : _.SORT_BYLENGTH,
@@ -165,6 +166,11 @@ _.prototype = {
 	},
 
 	close: function (o) {
+		if (this.search && o.reason === "blur") {
+			//do not close list on blur if its search box
+			return;
+		}
+
 		if (!this.opened) {
 			return;
 		}
@@ -264,11 +270,24 @@ _.prototype = {
 			});
 
 			if (allowed) {
-				this.replace(suggestion);
-				this.close({ reason: "select" });
-				$.fire(this.input, "awesomplete-selectcomplete", {
-					text: suggestion
-				});
+				if (this.search) {
+					//redirect page on select if its search box
+					window.location.href = suggestion.value;
+					
+					if (suggestion.value.charAt(0) === '#') {
+						//navigating through same page
+						this.close({ reason: "select" });
+						$.fire(this.input, "awesomplete-selectcomplete", {
+							text: suggestion
+						});
+					}
+				} else {
+					this.replace(suggestion);
+					this.close({ reason: "select" });
+					$.fire(this.input, "awesomplete-selectcomplete", {
+						text: suggestion
+					});
+				}
 			}
 		}
 	},
@@ -297,14 +316,19 @@ _.prototype = {
 			this.suggestions = this.suggestions.slice(0, this.maxItems);
 
 			this.suggestions.forEach(function(text, index) {
-					me.ul.appendChild(me.item(text, value, index));
-				});
+				me.ul.appendChild(me.item(text, value, index));
+			});
 
 			if (this.ul.children.length === 0) {
-                
                 this.status.textContent = "No results found";
                 
-				this.close({ reason: "nomatches" });
+				if (this.search) {
+					//write a status message if nothing found
+					this.open();
+					this.ul.innerHTML = '<li class="status">No results found.</li>';
+				} else {
+					this.close({ reason: "nomatches" });
+				}
         
 			} else {
 				this.open();
@@ -342,6 +366,14 @@ _.SORT_BYLENGTH = function (a, b) {
 
 _.ITEM = function (text, input, item_id) {
 	var html = input.trim() === "" ? text : text.replace(RegExp($.regExpEscape(input.trim()), "gi"), "<mark>$&</mark>");
+	
+	if (this.search) {
+		//add an anchor link
+		var link = text.value;
+		var anchor = '<a href="' + link + '">'+html+'</a>';
+		html = anchor;
+	}
+
 	return $.create("li", {
 		innerHTML: html,
 		"aria-selected": "false",

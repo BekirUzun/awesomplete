@@ -443,6 +443,25 @@ Awesomplete.$('.dropdown-btn').addEventListener("click", function() {
 });</script></code></pre>
 	</section>
 
+	<section id="searchbox">
+	<h2>Simple search box</h2>
+	<p>This addition does not affects main functionalitiy of Awesomplete. It can be enabled with just <code>search: true</code> setting.</p>
+	<p><b>Note:</b> Search inputs intended to used with label-value pair only.</p>
+	<label>Type two characters to search: <input type="text" id="search" /></label>
+	<pre class="language-markup"><code>&lt;input type="text" id="search" /></code></pre>
+	<pre class="language-javascript"><code><script>var searchInput = document.getElementById("search");
+
+var search = new Awesomplete(searchInput, {		
+	search: true,
+	list: [ 
+		{ label: "Fork me on Github", value:"https://github.com/LeaVerou/awesomplete" },
+		{ label: "Lea Verou", value:"http://lea.verou.me/" },
+		{ label: "Bekir Uzun", value:"https://github.com/BekirUzun" },
+		{ label: "Events section in this page", value:"#events" },
+	]
+});</script></code></pre>
+	</section>
+
 <section id="download">
 	<h1>Download!</h1>
 

@@ -78,15 +78,35 @@
 		padding: .2em .5em;
 		cursor: pointer;
 	}
+
+	.awesomplete > ul > li.status {
+		cursor: default;
+	}
 	
-	.awesomplete > ul > li:hover {
+	.awesomplete > ul > li:not(.status):hover {
 		background: hsl(200, 40%, 80%);
 		color: black;
 	}
 	
-	.awesomplete > ul > li[aria-selected="true"] {
+	.awesomplete > ul > li[aria-selected="true"]:not(.status) {
 		background: hsl(205, 40%, 40%);
 		color: white;
+	}
+
+	.awesomplete > ul > li > a {
+		display: inline-block;
+		width: 100%;
+		height: 100%;
+		text-decoration: none;
+		border: none;
+		color: black;
+	}
+
+	.awesomplete > ul > li[aria-selected="true"]:not(.status) a {
+		color: white;
+	}
+
+	.awesomplete > ul > li > a:hover {
 	}
 	
 		.awesomplete mark {
